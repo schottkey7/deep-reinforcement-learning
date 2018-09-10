@@ -1,0 +1,42 @@
+╰─$ python train.py
+Mono path[0] = '/Users/nora/Projects/github/deep-reinforcement-learning/p1_navigation/Banana.app/Contents/Resources/Data/Managed'
+Mono config path = '/Users/nora/Projects/github/deep-reinforcement-learning/p1_navigation/Banana.app/Contents/MonoBleedingEdge/etc'
+INFO:unityagents:
+'Academy' started successfully!
+Unity Academy name: Academy
+        Number of Brains: 1
+        Number of External Brains : 1
+        Lesson number : 0
+        Reset Parameters :
+
+Unity brain name: BananaBrain
+        Number of Visual Observations (per agent): 0
+        Vector Observation space type: continuous
+        Vector Observation space size (per agent): 37
+        Number of stacked Vector Observation: 1
+        Vector Action space type: discrete
+        Vector Action space size (per agent): 4
+        Vector Action descriptions: , , ,
+
+--> Training
+
+Episode 100	Average Score: 1.336	Average Time: 1.37s
+Episode 200	Average Score: 5.13	Average Time: 2.13s
+Episode 300	Average Score: 8.40	Average Time: 2.62s
+Episode 400	Average Score: 10.02	Average Time: 2.46s
+Episode 500	Average Score: 12.29	Average Time: 2.27s
+Episode 600	Average Score: 14.27	Average Time: 2.33s
+Episode 700	Average Score: 15.98	Average Time: 2.51s
+Episode 800	Average Score: 15.64	Average Time: 2.42s
+Episode 900	Average Score: 15.37	Average Time: 2.53s
+Episode 1000	Average Score: 15.69	Average Time: 2.74s
+Episode 1100	Average Score: 15.84	Average Time: 2.88s
+Episode 1200	Average Score: 16.01	Average Time: 2.88s
+Episode 1300	Average Score: 16.24	Average Time: 3.01s
+Episode 1400	Average Score: 15.60	Average Time: 3.09s
+Episode 1500	Average Score: 14.93	Average Time: 3.04s
+Episode 1600	Average Score: 15.76	Average Time: 3.09s
+Episode 1700	Average Score: 15.06	Average Time: 3.13s
+Episode 1800	Average Score: 14.57	Average Time: 3.11s
+Episode 1900	Average Score: 15.09	Average Time: 3.07s
+Episode 2000	Average Score: 15.09	Average Time: 3.11s
