@@ -84,6 +84,15 @@ def train(
             )
             torch.save(agent.qnetwork_local.state_dict(), "checkpoint.pth")
 
+        if np.mean(scores_window) > 13.0:
+            print(
+                "\nProject solved in {:d} episodes!\tAverage Score: {:.2f}\tAverage Time {:.2f}".format(
+                    i_ep - 100, np.mean(scores_window), np.mean(durations)
+                )
+            )
+            torch.save(agent.qnetwork_local.state_dict(), "checkpoint.pth")
+            break
+
         if np.mean(scores_window) >= 200.0:
             print(
                 "\nEnvironment solved in {:d} episodes!\tAverage Score: {:.2f}\tAverage Time {:.2f}".format(

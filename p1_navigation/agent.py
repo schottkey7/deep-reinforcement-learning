@@ -37,8 +37,7 @@ class Agent:
         # Q-Network
         self.qnetwork_local = QNetwork(state_size, action_size, seed).to(device)
         self.qnetwork_target = QNetwork(state_size, action_size, seed).to(device)
-        # self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=LR)
-        self.optimizer = optim.RMSprop(self.qnetwork_local.parameters())
+        self.optimizer = optim.Adam(self.qnetwork_local.parameters(), lr=LR)
 
         # Replay memory
         self.memory = ReplayBuffer(
@@ -69,6 +68,7 @@ class Agent:
         """
         state = torch.from_numpy(state).float().unsqueeze(0).to(device)
         self.qnetwork_local.eval()
+
         with torch.no_grad():
             action_values = self.qnetwork_local(state)
         self.qnetwork_local.train()
@@ -100,8 +100,7 @@ class Agent:
         q_expected = self.qnetwork_local(states).gather(1, actions)
 
         # Compute loss
-        # loss = F.mse_loss(q_expected, q_targets)
-        loss = F.smooth_l1_loss(q_expected, q_targets)
+        loss = F.mse_loss(q_expected, q_targets)
         # Minimize the loss
         self.optimizer.zero_grad()
         loss.backward()
