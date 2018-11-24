@@ -14,7 +14,7 @@ def train(env,
           brain_name,
           num_agents,
           action_size,
-          n_episodes=500,
+          n_episodes=15000,
           max_t=1000):
     """Deep Q-Learning.
 
@@ -30,15 +30,17 @@ def train(env,
         max_t (int): maximum number of timesteps per episode
     """
     # initialize the score (for each agent)
+    scores = []  # list containing scores from each episodes
+    scores_window = deque(maxlen=100)
     avg_scores = []
-    scores_window = deque(maxlen=100)  # last 100 scores
 
     for i_ep in range(1, n_episodes + 1):
 
         env_info = env.reset(train_mode=True)[brain_name]
-        states = env_info.vector_observations  # get the current state
-        scores = np.zeros(num_agents)
         agent.reset()
+
+        states = env_info.vector_observations  # get the current state
+        score = np.zeros(num_agents)
 
         tstart = time()
 
@@ -49,32 +51,33 @@ def train(env,
             rewards = env_info.rewards
             dones = env_info.local_done
 
-            agent.step(states, actions, rewards, next_states, dones, t)
+            agent.step(states, actions, rewards, next_states, dones)
 
+            score += rewards
             states = next_states
-            scores += rewards
 
             if np.any(dones):
                 break
 
-        score = np.mean(scores)
-        avg_scores.append(score)
-        scores_window.append(score)  # save most recent score
+        current_avg = np.mean(score)
+        scores_window.append(current_avg)
+        scores.append(current_avg)
         avg_score = np.mean(scores_window)
+        avg_scores.append(avg_score)
 
-        template = "Episode {}\tAverage Score: {:.2f}\tTime: {:.2f}s"
+        template = "\rEpisode {} | Avg Score: {:.3f} | Score: {:.3f} | Time: {:.2f}s"
 
-        print(template.format(i_ep, avg_score, time() - tstart))
+        print(template.format(i_ep, avg_score, current_avg, time() - tstart))
+
         if i_ep % 100 == 0:
-            print(template.format(i_ep, avg_score, time() - tstart))
             torch.save(agent.actor_local.state_dict(),
                        'saved/actor_checkpoint.pth')
             torch.save(agent.critic_local.state_dict(),
                        'saved/critic_checkpoint.pth')
 
-        if avg_score > 0.5:
-            print("\nEnv solved in {:d} eps!\nAvg Score: {:.2f}\tTime {:.2f}".
-                  format(i_ep - 100, avg_score,
+        if avg_score >= 0.5:
+            print("\nEnv solved in {:d} eps!\nAvg Score: {:.5f}\tTime {:.2f}".
+                  format(i_ep - 100, avg_score, current_avg,
                          time() - tstart))
             torch.save(agent.actor_local.state_dict(),
                        'saved/actor_checkpoint.pth')
@@ -82,7 +85,7 @@ def train(env,
                        'saved/critic_checkpoint.pth')
             break
 
-    return avg_scores
+    return scores, avg_scores
 
 
 def main():
@@ -116,13 +119,15 @@ def main():
 
     print("\n--> Training\n")
 
+    # Initializing agent
     agent = Agent(state_size, action_size, num_agents, seed)
-    scores = train(env, agent, brain_name, num_agents, action_size)
+    scores, avg_scores = train(env, agent, brain_name, num_agents, action_size)
 
     # Plot the scores after training
     fig = plt.figure()
     fig.add_subplot(111)
-    plt.plot(np.arange(len(scores)), scores)
+    plt.plot(np.arange(1, len(scores) + 1), scores)
+    plt.plot(np.arange(1, len(avg_scores) + 1), avg_scores)
     plt.ylabel("Score")
     plt.xlabel("Episode #")
     plt.savefig("training.png")

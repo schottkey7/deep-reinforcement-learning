@@ -14,7 +14,12 @@ def hidden_init(layer):
 class Actor(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc_units=128):
+    def __init__(self,
+                 state_size,
+                 action_size,
+                 seed,
+                 fc1_units=400,
+                 fc2_units=300):
         """Initialize parameters and build model.
         Params
         ======
@@ -26,11 +31,11 @@ class Actor(nn.Module):
         super(Actor, self).__init__()
         self.seed = torch.manual_seed(seed)
         # self.bn0 = nn.BatchNorm1d(state_size)
-        self.fc1 = nn.Linear(state_size, fc_units)
+        self.fc1 = nn.Linear(state_size, fc1_units)
         # self.bn1 = nn.BatchNorm1d(fc_units)
-        self.fc2 = nn.Linear(fc_units, fc_units)
+        self.fc2 = nn.Linear(fc1_units, fc2_units)
         # self.bn2 = nn.BatchNorm1d(fc_units)
-        self.fc3 = nn.Linear(fc_units, action_size)
+        self.fc3 = nn.Linear(fc2_units, action_size)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -56,8 +61,8 @@ class Critic(nn.Module):
                  state_size,
                  action_size,
                  seed,
-                 fcs1_units=128,
-                 fc2_units=128):
+                 fcs1_units=400,
+                 fc2_units=300):
         """Initialize parameters and build model.
         Params
         ======

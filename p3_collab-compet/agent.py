@@ -11,14 +11,12 @@ import torch.nn.functional as F
 import torch.optim as optim
 
 BUFFER_SIZE = int(1e6)  # replay buffer size
-NUM_UPDATES = 10  # number of updates per n time steps
-TIME_STEPS = 20  # how often to update
 BATCH_SIZE = 256  # minibatch size
 GAMMA = 0.99  # discount factor
 TAU = 1e-3  # for soft update of target parameters
-LR_ACTOR = 1e-3  # learning rate of the actor
-LR_CRITIC = 1e-3  # learning rate of the critic
-WEIGHT_DECAY = 0  # L2 weight decay
+LR_ACTOR = 5e-5  # learning rate of the actor
+LR_CRITIC = 6e-5  # learning rate of the critic
+WEIGHT_DECAY = 0.0001  # L2 weight decay
 EPSILON = 1.0
 EPSILON_DECAY = 1e-5
 
@@ -75,15 +73,7 @@ class Agent():
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE,
                                    random_seed)
 
-        self.deep_copy(self.actor_target, self.actor_local)
-        self.deep_copy(self.critic_target, self.critic_local)
-
-    def deep_copy(self, target, source):
-        for target_param, param in zip(target.parameters(),
-                                       source.parameters()):
-            target_param.data.copy_(param.data)
-
-    def step(self, states, actions, rewards, next_states, dones, t):
+    def step(self, states, actions, rewards, next_states, dones):
         """
         Save experience in replay memory, and use random
         sample from buffer to learn.
@@ -92,10 +82,9 @@ class Agent():
             self.memory.add(states[i, :], actions[i, :], rewards[i],
                             next_states[i, :], dones[i])
 
-        if len(self.memory) > BATCH_SIZE and t % TIME_STEPS == 0:
-            for _ in range(NUM_UPDATES):
-                experiences = self.memory.sample()
-                self.learn(experiences)
+        if len(self.memory) > BATCH_SIZE:
+            experiences = self.memory.sample()
+            self.learn(experiences)
 
     def act(self, states, add_noise=True):
         """Return actions for given state as per current policy."""
@@ -164,9 +153,6 @@ class Agent():
         # --------------------- update target networks --------------------- #
         self.soft_update(self.critic_local, self.critic_target)
         self.soft_update(self.actor_local, self.actor_target)
-
-        self.epsilon -= EPSILON_DECAY
-        self.noise.reset()
 
     def soft_update(self, local_model, target_model):
         """Soft update model parameters.
